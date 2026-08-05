@@ -19,7 +19,7 @@ const brawlAPI = axios.create({
 });
 
 app.command("/playgame-ping", async ({ command, ack, respond }) => {
-    console.log(command)
+    //console.log(command)
     const start = Date.now()
     await ack();
     const latency = Date.now() - start;
