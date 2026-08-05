@@ -8,7 +8,7 @@ const app = new App({
     socketMode: true
 });
 
-app.command("/gamebot-ping", async ({ command, ack, respond }) => {
+app.command("/playgame-ping", async ({ command, ack, respond }) => {
     const start = Date.now()
     await ack();
     const latency = Date.now() - start;
@@ -17,5 +17,5 @@ app.command("/gamebot-ping", async ({ command, ack, respond }) => {
 
 (async () => {
     await app.start();
-    console.log("GameBot is running!");
+    console.log("PlayGame is running!");
 })();
