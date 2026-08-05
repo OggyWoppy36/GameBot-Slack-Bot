@@ -70,11 +70,11 @@ app.command("/playgame-brawlstars", async ({ command, ack, respond }) => {
     console.log(tag)
     try {
         const response = await brawlAPI.get(`/players/${tag}`);
-        console.log(response)
-        await respond({ text: `Your Brawl Stars Trophies:\n${response.highestTrophies}` });
+        //console.log(response)
+        await respond({ text: `Your Brawl Stars Trophies:\n${response.data.highestTrophies}` });
     } catch (err) {
-        console.log(tag);
-        console.log(err);
+        //console.log(tag);
+        //console.log(err);
         await respond({ text: "Failed to fetch your trophies." });
     }
 });
