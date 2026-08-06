@@ -119,7 +119,7 @@ app.command("/playgame-battleship", async ({ command, ack, respond }) => {
   await respond({ text: `${wasHit ? "HIT!" : "miss."}\n\n${renderBoard(game)}`});
 });
 
-function getCoord(inp,size) {
+function getCoord(input,size) {
   const formatted = input.match(/^([a-zA-Z])(\d+)$/);
   if (!match) return null;
 
