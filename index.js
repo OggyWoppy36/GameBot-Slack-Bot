@@ -31,35 +31,9 @@ app.command("/playgame-help", async ({ ack, respond }) => {
   await respond({
     text: `Available Commands:
     /playgame-ping - Check bot latency
-    /playgame-catfact - Get a cat fact`,
+    /playgame-brawlstars - Check your brawl stars trophies with player ID
+    /playgame-battleship - Play battleship (singleplayer)`
   });
-});
-
-app.command("/playgame-catfact", async ({ ack, respond }) => {
-  await ack();
-
-  try {
-    const response = await axios.get("https://catfact.ninja/fact");
-    await respond({ text: `Cat Fact:\n${response.data.fact}` });
-  } catch (err) {
-    await respond({ text: "Failed to fetch a cat fact." });
-  }
-});
-
-app.command("/playgame-freebies", async ({ command, ack, respond }) => {
-  await ack();
-
-  try {
-    const response = await axios.get("https://www.gamerpower.com/api/giveaways?type=game&sort-by=value");
-    //console.log(response);
-    text = `${response.data.length} games found: \n`;
-    for (let i=0; i<response.data.length; i++) {
-        text += `${response.data[i].title} ${response.data[i].open_giveaway}\n`
-    }
-    await respond({ text: `${text}` });
-  } catch (err) {
-    await respond({ text: "Failed to fetch a free games." });
-  }
 });
 
 
@@ -90,7 +64,7 @@ app.command("/playgame-battleship", async ({ command, ack, respond }) => {
   if (input === "") {
 
     //start game
-    if (!game || game.status !== "in_progess") {
+    if (!game || game.status !== "in_progress") {
       game = createGame(userId);
       saveGame(game);
       return respond({ text: renderBoard(game) + "\nNew game started! Guess with /playgame-battleship [move] (Ex: b4)"});
@@ -145,7 +119,7 @@ app.command("/playgame-battleship", async ({ command, ack, respond }) => {
   await respond({ text: `${wasHit ? "HIT!" : "miss."}\n\n${renderBoard(game)}`});
 });
 
-function parseCoord(inp,size) {
+function getCoord(inp,size) {
   const formatted = input.match(/^([a-zA-Z])(\d+)$/);
   if (!match) return null;
 
@@ -156,13 +130,48 @@ function parseCoord(inp,size) {
   return [row, col];
 }
 
+function placeShips(size) {
+  // Fleet scales a bit with board size; tweak as you like
+  const fleet = size <= 6 ? [3, 2, 2] : [4, 3, 3, 2, 2];
+  const ships = [];
+  const occupied = new Set();
+
+  for (const length of fleet) {
+    let placed = false;
+    while (!placed) {
+      const horizontal = Math.random() < 0.5;
+      const row = Math.floor(Math.random() * size);
+      const col = Math.floor(Math.random() * size);
+
+      const cells = [];
+      for (let i = 0; i < length; i++) {
+        const r = horizontal ? row : row + i;
+        const c = horizontal ? col + i : col;
+        if (r >= size || c >= size) break;
+        cells.push([r, c]);
+      }
+
+      if (cells.length !== length) continue; // ran off the board, retry
+
+      const overlaps = cells.some(([r, c]) => occupied.has(`${r},${c}`));
+      if (overlaps) continue;
+
+      cells.forEach(([r, c]) => occupied.add(`${r},${c}`));
+      ships.push({ cells });
+      placed = true;
+    }
+  }
+
+  return ships;
+}
+
 function renderBoard(game) {
   const letts = "ABCDEFGHIJ".slice(0,game.size);
   let out = "```\n   " + letts.split("").join(" ") + "\n";
 
   for (let r = 0; r < game.size; r++) {
     let row = String(r+1).padStart(2, " ") + " ";
-    for (let c = 0; c > game.size; c++) {
+    for (let c = 0; c < game.size; c++) {
       const hit = game.hits.some(([hr,hc]) => hr===r && hc===c);
       const miss = game.misses.some(([mr,mc]) => mr===r && mc===c);
       if (hit) row += "🟥 ";
@@ -173,6 +182,51 @@ function renderBoard(game) {
   }
   return out + "```";
 }
+
+function createGame(userId, size=7) {
+  const ships = placeShips(size);
+  return {
+    userId,
+    size,
+    ships,
+    hits: [],
+    misses: [],
+    startedAt: Date.now(),
+    finishedAt: null,
+    status: "in_progress"
+  };
+}
+
+const fs = require("fs");
+const path = require("path");
+const FILE = path.join(__dirname, "games.json");
+
+function loadAll() {
+  if (!fs.existsSync(FILE)) return {};
+  return JSON.parse(fs.readFileSync(FILE, "utf8"));
+}
+
+function saveAll(games) {
+  fs.writeFileSync(FILE, JSON.stringify(games, null, 2));
+}
+
+function getGame(userId) {
+  return loadAll()[userId] || null;
+}
+
+function saveGame(game) {
+  const games = loadAll();
+  games[game.userId] = game;
+  saveAll(games);
+}
+
+function deleteGame(userId) {
+  const games = loadAll();
+  delete games[userId];
+  saveAll(games);
+}
+
+module.exports = {getGame, saveGame, deleteGame};
 
 (async () => {
     await app.start();
