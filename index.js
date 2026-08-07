@@ -183,7 +183,7 @@ function renderBoard(game) {
       const miss = game.misses.some(([mr,mc]) => mr===r && mc===c);
       if (hit) row += "🟥";
       else if (miss) row += "⏹️";
-      else row += "🟦 ";
+      else row += "🟦";
     }
     out += row + "\n";
   }
