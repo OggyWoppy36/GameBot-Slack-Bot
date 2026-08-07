@@ -99,7 +99,7 @@ app.command("/playgame-battleship", async ({ command, ack, respond }) => {
     }
   }
 
-  if (alreadyGuessed) {
+  if (guessed) {
     return respond({
       text: `Already guessed that cell.\n\n${renderBoard(game)}`,
     });
