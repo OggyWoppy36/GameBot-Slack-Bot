@@ -99,6 +99,13 @@ app.command("/playgame-battleship", async ({ command, ack, respond }) => {
     }
   }
 
+  if (alreadyGuessed) {
+    return respond({
+      text: `Already guessed that cell.\n\n${renderBoard(game)}`,
+    });
+  }
+
+
   const wasHit = game.ships.some(ship => ship.cells.some(([sr,sc]) => sr===r && sc===c));
   if (wasHit) {
     game.hits.push([r, c]);
@@ -126,7 +133,7 @@ function getCoord(input,size) {
   const col = formatted[1].toUpperCase().charCodeAt(0) - 65;
   const row = parseInt(formatted[2],10) - 1;
 
-  if (cal < 0 || col >= size || row < 0 || row >= size) return null;
+  if (col < 0 || col >= size || row < 0 || row >= size) return null;
   return [row, col];
 }
 
@@ -225,8 +232,6 @@ function deleteGame(userId) {
   delete games[userId];
   saveAll(games);
 }
-
-module.exports = {getGame, saveGame, deleteGame};
 
 (async () => {
     await app.start();
