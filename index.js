@@ -174,10 +174,10 @@ function placeShips(size) {
 
 function renderBoard(game) {
   const letts = "ABCDEFGHIJ".slice(0,game.size);
-  let out = "```\n   " + letts.split("").join(" ") + "\n";
+  let out = "```\n    " + letts.split("").join("  ") + "\n";
 
   for (let r = 0; r < game.size; r++) {
-    let row = String(r+1).padStart(3, " ") + "  ";
+    let row = String(r+1).padStart(2, " ") + "  ";
     for (let c = 0; c < game.size; c++) {
       const hit = game.hits.some(([hr,hc]) => hr===r && hc===c);
       const miss = game.misses.some(([mr,mc]) => mr===r && mc===c);
