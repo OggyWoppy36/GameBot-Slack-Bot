@@ -181,8 +181,8 @@ function renderBoard(game) {
     for (let c = 0; c < game.size; c++) {
       const hit = game.hits.some(([hr,hc]) => hr===r && hc===c);
       const miss = game.misses.some(([mr,mc]) => mr===r && mc===c);
-      if (hit) row += "🟥 ";
-      else if (miss) row += "⏹️ ";
+      if (hit) row += "🟥";
+      else if (miss) row += "⏹️";
       else row += "🟦 ";
     }
     out += row + "\n";
