@@ -121,10 +121,10 @@ app.command("/playgame-battleship", async ({ command, ack, respond }) => {
 
 function getCoord(input,size) {
   const formatted = input.match(/^([a-zA-Z])(\d+)$/);
-  if (!match) return null;
+  if (!formatted) return null;
 
   const col = formatted[1].toUpperCase().charCodeAt(0) - 65;
-  const row = parseInt(match[2],10) - 1;
+  const row = parseInt(formatted[2],10) - 1;
 
   if (cal < 0 || col >= size || row < 0 || row >= size) return null;
   return [row, col];
