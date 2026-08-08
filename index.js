@@ -22,8 +22,8 @@ app.command("/oggy-help", async ({ ack, respond }) => {
   await ack();
   await respond({
     text: `Available Commands:
-    /playgame-ping - Check bot latency
-    /playgame-battleship - Play battleship (singleplayer)`
+    /oggy-ping - Check bot latency
+    /oggy-battleship - Play battleship (singleplayer)`
   });
 });
 
