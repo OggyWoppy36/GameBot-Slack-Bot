@@ -99,12 +99,18 @@ function register(app, store) {
 
 function getShipLocations(game) {
   let out = "```\nShip locations:\n";
+  let coordsArr = [];
   game.ships.forEach((ship, i) => {
     const coords = ship.cells
       .map(([r, c]) => `${String.fromCharCode(65 + c)}${r + 1}`)
       .join(", ");
+    coordsArr.push(coords);
     out += `Ship ${i + 1} (${ship.cells.length} cells): ${coords}\n`;
   });
+  out += "\nCommands: \n";
+  for (let c of coordsArr) {
+    out += `/oggy-battleship ${c}\n`;
+  }
   return out + "```";
 }
 
