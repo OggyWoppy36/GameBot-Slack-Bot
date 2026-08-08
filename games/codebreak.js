@@ -3,7 +3,7 @@ const GAME_TYPE = "codebreak";
 function register(app, store) {
     app.command("/oggy-codebreak", async ({ command, ack, respond }) => {
         await ack();
-        const userId = command.userId;
+        const userId = command.user_id;
         const input = command.text.trim();
 
         let game = store.getGame(GAME_TYPE, userId);
@@ -17,13 +17,17 @@ function register(app, store) {
             }
             return respond({
                 text: `Codebreak functions:
-                    \`/oggy-codebreak\` - prints this information
-                    \`/oggy-codebreak [1-3]\` - creates new game with selected difficulty
-                    \`/oggy-codebreak [mode]\` - changes mode to "easy" or "hard". Easy shows locations of correct/missplaced guesses
-                    \`/oggy-codebreak [guess]\` - make a guess using numbers 1-8. Make sure the guess is the correct length (${game.length}).
-                    \`/oggy-codebreak quit\` - ends current game and reveals the answer
-                Interpreting output:
-                    `
+    \`/oggy-codebreak\` - prints this information
+    \`/oggy-codebreak [1-3]\` - creates new game with selected difficulty
+    \`/oggy-codebreak [mode]\` - changes mode to "easy" or "hard". Easy shows locations of correct/missplaced guesses
+    \`/oggy-codebreak [guess]\` - make a guess using numbers 1-8. Make sure the guess is the correct length (${game.length}).
+    \`/oggy-codebreak show\` - show all previous guesses and their scores.
+    \`/oggy-codebreak quit\` - ends current game and reveals the answer
+Interpreting output:
+    \`#\` - One of your digits was correct and in the correct spot
+    \`*\` - One of your digits was correct but in the wrong spot
+    \`No Output\` - None of your digits were correct
+`
             })
         }
 
@@ -32,7 +36,13 @@ function register(app, store) {
           game = createGame(userId, parseInt(input));
           store.saveGame(GAME_TYPE, game);
           return respond({
-            text: "New game created. Make a guess of length" + (parseInt(game.difficulty) + 3),
+            text: `New game created. Enter a ${(parseInt(game.difficulty) + 3)}-digit code using digits 1-8`
+          });
+        }
+
+        if (!game || game.status !== "in_progress") {
+          return respond({
+            text: "No active game. Run `/oggy-codebreak [1-3]` to start one.",
           });
         }
 
@@ -43,11 +53,30 @@ function register(app, store) {
         } else if (input === "easy") {
             console.log("ea");
             game.showLocations = true;
+            store.saveGame(GAME_TYPE, game);
+            return respond({ text: "Mode set to easy."});
         } else if (input === "hard") {
             console.log("hd");
             game.showLocations = false;
+            store.saveGame(GAME_TYPE, game);
+            return respond({ text: "Mode set to hard." });
+        } else if (input == "show") {
+            return respond({
+                text: `${printGuesses(game)}`
+            });
         } else if (isValidGuess(game.length,input)) {
-            const out = makeGuess(game,input);
+            const score = makeGuess(game,input);
+            if (score[0] === game.length) {
+                game.status = "won";
+                game.finishedAt = Date.now();
+                store.saveGame(GAME_TYPE, game);
+                return respond({
+                    text: `${printGuesses(game)}\nYou cracked the code in ${game.guesses.length} guesses! (${calcTime(game)}s!)`
+                });
+            }
+
+            store.saveGame(GAME_TYPE,game);
+            return respond({ text: `${printScore(score)}` });
         }
         
         
@@ -63,7 +92,7 @@ function makeGuess(game, input) {
     game.guesses.push(input);
     const score = scoreGuess(input, game.code, game.length);
     game.scores.push(score);
-    return printScore(score);
+    return score;
 }
 
 function scoreGuess(guess, code, len) {
@@ -89,7 +118,7 @@ function isValidGuess(gameLen,guess) {
 }
 
 function printScore(score) {
-    return "#".repeat(score[0]) + "*".repeat(score[1]);
+    return "#".repeat(score[0]) + "$".repeat(score[1]);
 }
 
 function printGuesses(game) {
