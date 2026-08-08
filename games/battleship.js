@@ -31,9 +31,8 @@ function register(app, store) {
 
     if (input=="see-ships-cheat") {
         return respond({
-            text: `${game.ships}`
+            text: `${getShipLocations(game)}`
         })
-        return;
     }
 
     const coord = getCoord(input, game.size);
@@ -96,6 +95,17 @@ function register(app, store) {
       text: `${renderBoard(game)}\n\n${wasHit ? "HIT!" : "miss."}`,
     });
   });
+}
+
+function getShipLocations(game) {
+  let out = "```\nShip locations:\n";
+  game.ships.forEach((ship, i) => {
+    const coords = ship.cells
+      .map(([r, c]) => `${String.fromCharCode(65 + c)}${r + 1}`)
+      .join(", ");
+    out += `Ship ${i + 1} (${ship.cells.length} cells): ${coords}\n`;
+  });
+  return out + "```";
 }
 
 function getCoord(input, size) {
