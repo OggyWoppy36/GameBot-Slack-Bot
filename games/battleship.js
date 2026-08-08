@@ -137,8 +137,8 @@ function placeShips(size) {
 }
 
 function renderBoard(game) {
-  const letts = "ABCDEFGHIJ".slice(0, game.size);
-  let out = "```\n     " + letts.split("").join(" ") + "\n";
+  const letts = "A B C D E  F G H I J";
+  let out = "```\n     " + letts + "\n";
 
   for (let r = 0; r < game.size; r++) {
     let row = String(r + 1).padStart(2, " ") + "  ";
