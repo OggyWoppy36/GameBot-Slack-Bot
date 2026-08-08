@@ -23,26 +23,8 @@ app.command("/playgame-help", async ({ ack, respond }) => {
   await respond({
     text: `Available Commands:
     /playgame-ping - Check bot latency
-    /playgame-brawlstars - Check your brawl stars trophies with player ID
     /playgame-battleship - Play battleship (singleplayer)`
   });
-});
-
-
-app.command("/playgame-brawlstars", async ({ command, ack, respond }) => {
-    await ack();
-    tag = command.text
-    tag = "%23" + tag.substring(1)
-    console.log(tag)
-    try {
-        const response = await brawlAPI.get(`/players/${tag}`);
-        //console.log(response)
-        await respond({ text: `Your Brawl Stars Trophies:\n${response.data.highestTrophies}` });
-    } catch (err) {
-        //console.log(tag);
-        //console.log(err);
-        await respond({ text: "Failed to fetch your trophies." });
-    }
 });
 
 app.command("/playgame-battleship", async ({ command, ack, respond }) => {
