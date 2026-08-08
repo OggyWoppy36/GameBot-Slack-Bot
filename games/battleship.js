@@ -78,8 +78,9 @@ function register(app, store) {
       game.finishedAt = Date.now();
       store.saveGame(GAME_TYPE, game);
       const seconds = ((game.finishedAt - game.startedAt) / 1000.0).toFixed(1);
+      const moves = game.hits.length + game.misses.length;
       return respond({
-        text: `${renderBoard(game)}\n *You won in ${seconds}s!*`,
+        text: `${renderBoard(game)}\n *You won in ${moves} moves! (${seconds}s!)*`,
       });
     }
 
