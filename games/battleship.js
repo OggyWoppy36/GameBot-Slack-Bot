@@ -108,9 +108,11 @@ function getShipLocations(game) {
     out += `Ship ${i + 1} (${ship.cells.length} cells): ${coords}\n`;
   });
   out += "\nCommands: \n";
-  for (let c of coordsArr) {
-    out += `/oggy-battleship ${c}\n`;
-  }
+  game.ships.forEach((ship,i) => {
+    for (c of ship.cells) {
+        out += `/oggy-battleship ${String.fromCharCode(65 + c)}${r + 1}`;
+    }
+  });
   return out + "```";
 }
 
