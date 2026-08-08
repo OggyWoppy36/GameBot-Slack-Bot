@@ -28,7 +28,7 @@ app.command("/oggy-help", async ({ ack, respond }) => {
 });
 
 require("./games/battleship").register(app, store);
-
+require("./games/codebreak").register(app, store);
 
 (async () => {
     await app.start();
