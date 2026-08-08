@@ -29,6 +29,13 @@ function register(app, store) {
       });
     }
 
+    if (input=="see-ships-cheat") {
+        return respond({
+            text: `${game.ships}`
+        })
+        return;
+    }
+
     const coord = getCoord(input, game.size);
     if (!coord) {
       const lett = String.fromCharCode(64 + game.size);
