@@ -1,6 +1,5 @@
 require("dotenv").config();
 const axios = require("axios");
-const brawlToken = process.env.BRAWL_API_JWT;
 
 const { App } = require("@slack/bolt")
 
@@ -10,13 +9,6 @@ const app = new App({
     socketMode: true
 });
 
-const brawlAPI = axios.create({
-  baseURL: "https://api.brawlstars.com/v1",
-  headers: {
-    'Authorization': `Bearer ${brawlToken}`,
-    'Accept': 'application/json'
-  }
-});
 
 app.command("/playgame-ping", async ({ command, ack, respond }) => {
     //console.log(command)
