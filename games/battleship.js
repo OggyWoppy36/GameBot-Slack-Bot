@@ -138,7 +138,7 @@ function placeShips(size) {
 
 function renderBoard(game) {
   const letts = "A B C D E  F G H I J";
-  let out = "```\n     " + letts + "\n";
+  let out = "```\n    " + letts + "\n";
 
   for (let r = 0; r < game.size; r++) {
     let row = String(r + 1).padStart(2, " ") + "  ";
