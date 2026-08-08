@@ -10,7 +10,7 @@ const app = new App({
 });
 
 
-app.command("/playgame-ping", async ({ command, ack, respond }) => {
+app.command("/oggy-ping", async ({ command, ack, respond }) => {
     //console.log(command)
     const start = Date.now()
     await ack();
@@ -18,7 +18,7 @@ app.command("/playgame-ping", async ({ command, ack, respond }) => {
     await respond({ text: `Pong!\nLatency: ${latency}ms` });
 });
 
-app.command("/playgame-help", async ({ ack, respond }) => {
+app.command("/oggy-help", async ({ ack, respond }) => {
   await ack();
   await respond({
     text: `Available Commands:
@@ -27,7 +27,7 @@ app.command("/playgame-help", async ({ ack, respond }) => {
   });
 });
 
-app.command("/playgame-battleship", async ({ command, ack, respond }) => {
+app.command("/oggy-battleship", async ({ command, ack, respond }) => {
   await ack();
   const userId = command.user_id;
   const input = command.text.trim();
