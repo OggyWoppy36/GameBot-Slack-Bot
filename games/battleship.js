@@ -85,7 +85,7 @@ function register(app, store) {
 
     store.saveGame(GAME_TYPE, game);
     await respond({
-      text: `${wasHit ? "HIT!" : "miss."}\n\n${renderBoard(game)}`,
+      text: `${renderBoard(game)}\n\n${wasHit ? "HIT!" : "miss."}`,
     });
   });
 }
